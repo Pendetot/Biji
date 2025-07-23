@@ -56,9 +56,30 @@ export class AICodeAssistant {
             'test', 'tests', 'refactor', 'fix', 'perbaiki', 'optimize', 'optimasi',
             'explain', 'jelaskan', 'review',
             
+            // Auto execution mode
+            '/do', '/do buat folder', '/do buat file', '/do copy', '/do install',
+            '/do pindah', '/do hapus', '/do tampilkan',
+            
             // Utilities
-            'config', 'history', 'help', 'clear', 'exit', 'quit'
+            'config', 'history', 'cmd-history', 'help', 'clear', 'exit', 'quit'
         ];
+
+        // Special completion for /do commands
+        if (line.startsWith('/do ')) {
+            const doCommands = [
+                '/do buat folder ',
+                '/do buat file ',
+                '/do copy ',
+                '/do pindah ',
+                '/do install ',
+                '/do tampilkan file',
+                '/do cari file',
+                '/do backup '
+            ];
+            
+            const hits = doCommands.filter((c) => c.startsWith(line));
+            return [hits.length ? hits : doCommands, line];
+        }
 
         const hits = commands.filter((c) => c.startsWith(line));
         return [hits.length ? hits : commands, line];
@@ -85,7 +106,11 @@ export class AICodeAssistant {
             chalk.white('  • 🧪 Pembuatan unit test') + '\n' +
             chalk.white('  • 📚 Dokumentasi kode') + '\n' +
             chalk.white('  • 🔄 Refactoring otomatis') + '\n' +
-            chalk.white('  • 📁 Manajemen file lengkap') + '\n\n' +
+            chalk.white('  • 📁 Manajemen file lengkap') + '\n' +
+            chalk.red('  • 🚀 Eksekusi terminal otomatis') + '\n\n' +
+            chalk.magenta('🎯 Mode Baru: Natural Language Commands!') + '\n' +
+            chalk.white('   Ketik: ') + chalk.cyan('/do buat folder components') + '\n' +
+            chalk.white('   Atau: ') + chalk.cyan('/do copy file.js ke backup/') + '\n\n' +
             chalk.blue('💡 Ketik "help" untuk bantuan, "exit" untuk keluar'),
             {
                 padding: 1,

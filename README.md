@@ -48,6 +48,12 @@ AI Code Assistant adalah aplikasi command-line interface (CLI) yang canggih dan 
 - File search dan filtering
 - Backup management
 
+### 🚀 **Natural Language Commands (NEW!)**
+- Eksekusi perintah terminal dengan bahasa natural
+- AI mengkonversi instruksi ke terminal commands
+- Preview dan konfirmasi sebelum eksekusi  
+- Sistem keamanan untuk mencegah perintah berbahaya
+
 ## 🛠️ Instalasi
 
 ### Prasyarat
@@ -65,6 +71,9 @@ npm install
 
 # Jalankan aplikasi
 npm start
+
+# Lihat demo fitur baru
+npm run demo
 ```
 
 ### Instalasi Global
@@ -146,6 +155,21 @@ test <filename>             # Generate unit test
 explain <filename>          # Jelaskan cara kerja kode
 ```
 
+### 🚀 **Natural Language Commands**
+```bash
+# Mode eksekusi otomatis dengan prefix /do
+/do buat folder components           # Buat folder
+/do buat file index.js              # Buat file
+/do copy package.json ke backup/    # Copy file
+/do install express dengan npm      # Install package
+/do pindahkan old.js ke archive/    # Move file
+/do tampilkan semua file            # List files
+
+# AI akan mengkonversi ke terminal commands yang aman
+# Preview perintah sebelum eksekusi
+# Konfirmasi user diperlukan
+```
+
 ### 🔧 **Manajemen Model**
 ```bash
 models                      # Tampilkan daftar model AI
@@ -202,6 +226,21 @@ explain src/legacy-code.js
 
 # Buat backup sebelum apply changes
 backup src/legacy-code.js
+```
+
+### Natural Language Commands
+```bash
+# Setup project baru dengan struktur folder
+/do buat project React dengan folder src dan components
+
+# Install dependencies sekaligus
+/do install react react-dom react-router-dom dengan npm
+
+# Buat komponen dengan struktur lengkap
+/do buat file Header.jsx di src/components dengan template
+
+# Copy dan backup file konfigurasi
+/do copy semua file config ke folder backup
 ```
 
 ## 🔧 Konfigurasi

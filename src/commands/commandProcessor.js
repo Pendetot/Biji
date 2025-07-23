@@ -3,6 +3,7 @@ import path from 'path';
 import { createDiffPatch } from 'diff';
 import fileManager from '../utils/fileManager.js';
 import aiService from '../services/aiService.js';
+import commandExecutor from '../services/commandExecutor.js';
 
 export class CommandProcessor {
     constructor() {
@@ -114,12 +115,20 @@ export class CommandProcessor {
             if (commandLower === 'history') {
                 return this._handleHistory();
             }
+            if (commandLower === 'cmd-history') {
+                return this._handleCommandHistory();
+            }
             if (commandLower === 'help') {
                 return this._showHelp();
             }
             if (commandLower === 'clear') {
                 console.clear();
                 return '';
+            }
+            
+            // Mode eksekusi otomatis - jika dimulai dengan /do
+            if (commandLower.startsWith('/do ')) {
+                return await this._handleAutoExecute(trimmedCommand.substring(4));
             }
             
             // Default: treat as AI command
@@ -597,6 +606,34 @@ export class CommandProcessor {
     }
 
     /**
+     * Handle terminal command history
+     */
+    _handleCommandHistory() {
+        commandExecutor.displayHistory();
+        return '';
+    }
+
+    /**
+     * Handle auto execute mode
+     */
+    async _handleAutoExecute(prompt) {
+        console.log(chalk.blue.bold('🚀 MODE EKSEKUSI OTOMATIS AKTIF'));
+        console.log(chalk.gray(`📝 Prompt: ${prompt}\n`));
+        
+        // Deteksi intent dari prompt
+        const intents = commandExecutor.extractCommandIntent(prompt);
+        
+        if (intents.length > 0) {
+            console.log(chalk.yellow(`🎯 Intent terdeteksi: ${intents.join(', ')}\n`));
+        }
+        
+        // Panggil AI dengan mode eksekusi
+        const response = await aiService.askAI(prompt, null, true);
+        
+        return response;
+    }
+
+    /**
      * Handle AI command
      */
     async _handleAICommand(command) {
@@ -680,13 +717,29 @@ ${chalk.yellow('💬 PERINTAH AI:')}
    review [file]      - Code review
    search <query>     - Cari dalam project
 
+${chalk.red('🚀 MODE EKSEKUSI OTOMATIS:')}
+   ${chalk.cyan('/do <prompt>')}      - Eksekusi perintah terminal otomatis
+   
+   ${chalk.gray('Contoh penggunaan:')}
+   ${chalk.white('/do buat folder components')}
+   ${chalk.white('/do buat file index.js di src')}
+   ${chalk.white('/do copy package.json ke backup')}
+   ${chalk.white('/do install express dengan npm')}
+
 ${chalk.yellow('🔧 UTILITAS:')}
-   history            - Tampilkan history perintah
+   history            - Tampilkan history perintah AI
+   cmd-history        - Tampilkan history eksekusi terminal
    clear              - Bersihkan layar
    help               - Tampilkan bantuan ini
    
 ${chalk.yellow('🚪 KELUAR:')}
-   exit / quit        - Keluar dari aplikasi`;
+   exit / quit        - Keluar dari aplikasi
+
+${chalk.green('💡 Tips:')}
+   • Gunakan ${chalk.cyan('/do')} untuk eksekusi otomatis terminal commands
+   • Prompt dengan bahasa natural: "buat folder", "copy file", dll
+   • AI akan mengkonversi ke perintah terminal yang aman
+   • Review perintah sebelum eksekusi untuk keamanan`;
     }
 
     /**

@@ -2,6 +2,7 @@ import axios from 'axios';
 import chalk from 'chalk';
 import config from '../config/config.js';
 import fileManager from '../utils/fileManager.js';
+import commandExecutor from './commandExecutor.js';
 
 export class AIService {
     constructor() {
@@ -96,9 +97,9 @@ export class AIService {
     }
 
     /**
-     * Tanya AI dengan konteks file
+     * Tanya AI dengan konteks file dan eksekusi otomatis
      */
-    async askAI(prompt, contextFiles = null) {
+    async askAI(prompt, contextFiles = null, executeCommands = false) {
         if (!this.projectLoaded) {
             await this.scanProject(true);
         }
@@ -106,7 +107,7 @@ export class AIService {
         // Buat konteks dari file yang relevan
         const context = this._buildContext(contextFiles);
 
-        const systemMessage = this._createSystemMessage(context);
+        const systemMessage = this._createSystemMessage(context, executeCommands);
         
         const messages = [
             { role: 'system', content: systemMessage },
@@ -129,7 +130,25 @@ export class AIService {
             });
 
             if (response.status === 200 && response.data?.choices?.[0]?.message?.content) {
-                return response.data.choices[0].message.content;
+                const aiResponse = response.data.choices[0].message.content;
+                
+                // Jika diminta untuk eksekusi otomatis, ekstrak dan jalankan perintah
+                if (executeCommands) {
+                    const commands = commandExecutor.parseAICommands(aiResponse);
+                    const intents = commandExecutor.extractCommandIntent(prompt);
+                    const contextualCommands = commandExecutor.generateContextualCommands(prompt, intents);
+                    
+                    // Gabungkan perintah dari AI response dan contextual commands
+                    const allCommands = [...new Set([...commands, ...contextualCommands])];
+                    
+                    if (allCommands.length > 0) {
+                        console.log(chalk.blue('\n🤖 AI sedang memproses perintah Anda...\n'));
+                        await commandExecutor.executeCommands(allCommands, false);
+                        console.log(chalk.green('\n✅ Eksekusi selesai!\n'));
+                    }
+                }
+                
+                return aiResponse;
             } else {
                 return '❌ Respons AI tidak valid';
             }
@@ -226,8 +245,8 @@ export class AIService {
     /**
      * Buat system message untuk AI
      */
-    _createSystemMessage(context) {
-        return `Anda adalah asisten kode AI yang ahli dalam analisis dan modifikasi kode. Anda mirip dengan Gemini CLI dan memiliki kemampuan:
+    _createSystemMessage(context, executeCommands = false) {
+        const baseMessage = `Anda adalah asisten kode AI yang ahli dalam analisis dan modifikasi kode. Anda mirip dengan Gemini CLI dan memiliki kemampuan:
 
 1. 🔍 Analisis kode mendalam
 2. 🐛 Deteksi dan perbaikan bug
@@ -237,6 +256,7 @@ export class AIService {
 6. 🔄 Refactoring kode
 7. 🎯 Code review
 8. 💡 Saran best practices
+9. 🛠️ Eksekusi perintah terminal otomatis
 
 KONTEKS PROJECT:
 ${context}
@@ -248,9 +268,27 @@ INSTRUKSI RESPONS:
 - Jelaskan reasoning di balik setiap saran
 - Jika diminta memodifikasi kode, berikan kode lengkap
 - Gunakan emoji untuk membuat respons lebih menarik
-- Prioritaskan keamanan dan best practices
+- Prioritaskan keamanan dan best practices`;
 
-Jika tidak ada konteks file, berikan saran umum yang berguna.`;
+        if (executeCommands) {
+            return baseMessage + `
+
+INSTRUKSI KHUSUS UNTUK EKSEKUSI:
+- Jika user meminta untuk membuat file/folder, berikan perintah terminal yang sesuai
+- Gunakan format \`\`\`bash untuk perintah yang akan dieksekusi
+- Contoh: jika user bilang "buat folder components", berikan:
+  \`\`\`bash
+  mkdir components
+  \`\`\`
+- Untuk file: \`\`\`bash\ntouch filename.js\n\`\`\`
+- Untuk copying: \`\`\`bash\ncp source destination\n\`\`\`
+- Selalu jelaskan apa yang akan dilakukan sebelum memberikan perintah
+- Berikan perintah yang aman dan tidak merusak sistem
+
+Jika user memberikan instruksi natural language, konversi menjadi perintah terminal yang tepat.`;
+        }
+
+        return baseMessage + `\n\nJika tidak ada konteks file, berikan saran umum yang berguna.`;
     }
 
     /**
