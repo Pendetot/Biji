@@ -11,6 +11,7 @@
     "start": "node index.js",
     "dev": "node --watch index.js",
     "demo": "node demo.js",
+    "demo-api": "node demo-api-setup.js",
     "test": "node test.js",
     "build": "echo 'No build step required'",
     "install-global": "npm install -g ."

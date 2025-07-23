@@ -430,7 +430,7 @@ Jika user memberikan instruksi natural language, konversi menjadi perintah termi
             loaded: this.projectLoaded,
             filesCount: Object.keys(this.filesData).length,
             currentModel: this.selectedModel,
-            apiKeyConfigured: this.apiKey && this.apiKey.trim().length > 1,
+            apiKeyConfigured: config.isApiKeyConfigured(),
             currentDirectory: process.cwd()
         };
     }

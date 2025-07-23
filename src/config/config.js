@@ -122,6 +122,10 @@ export class Config {
         return this.config.apiKey;
     }
 
+    isApiKeyConfigured() {
+        return this.config.apiKey && this.config.apiKey.trim().length > 1 && this.config.apiKey !== ' ';
+    }
+
     setApiKey(apiKey) {
         this.set('apiKey', apiKey);
     }
