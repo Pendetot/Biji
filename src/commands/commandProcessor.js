@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import path from 'path';
-import { createDiffPatch } from 'diff';
+import * as diff from 'diff';
 import fileManager from '../utils/fileManager.js';
 import aiService from '../services/aiService.js';
 import commandExecutor from '../services/commandExecutor.js';
@@ -412,12 +412,12 @@ export class CommandProcessor {
             return chalk.red(`❌ File ${file2} tidak ditemukan`);
         }
 
-        const diff = createDiffPatch(file1, file2, content1, content2);
+        const diffResult = diff.createPatch(file1, content1, content2, file1, file2);
         
-        if (diff) {
-            return `${chalk.blue(`📊 Perbedaan antara ${file1} dan ${file2}:`)}\n${diff}`;
-        } else {
+        if (diffResult && !diffResult.includes('@@')) {
             return chalk.green(`✅ File ${file1} dan ${file2} identik`);
+        } else {
+            return `${chalk.blue(`📊 Perbedaan antara ${file1} dan ${file2}:`)}\n${diffResult}`;
         }
     }
 
