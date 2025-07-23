@@ -61,7 +61,11 @@ export class AICodeAssistant {
             '/do pindah', '/do hapus', '/do tampilkan',
             
             // Utilities
+cursor/migrasi-python-ke-nodejs-dengan-fitur-lengkap-897b
+            'config', 'setup-api', 'api-key', 'history', 'cmd-history', 'help', 'clear', 'exit', 'quit'
+=======
             'config', 'history', 'cmd-history', 'help', 'clear', 'exit', 'quit'
+main
         ];
 
         // Special completion for /do commands
@@ -111,7 +115,11 @@ export class AICodeAssistant {
             chalk.magenta('🎯 Mode Baru: Natural Language Commands!') + '\n' +
             chalk.white('   Ketik: ') + chalk.cyan('/do buat folder components') + '\n' +
             chalk.white('   Atau: ') + chalk.cyan('/do copy file.js ke backup/') + '\n\n' +
+cursor/migrasi-python-ke-nodejs-dengan-fitur-lengkap-897b
+            chalk.blue('💡 Ketik "help" untuk bantuan, "setup-api" untuk konfigurasi API, "exit" untuk keluar'),
+=======
             chalk.blue('💡 Ketik "help" untuk bantuan, "exit" untuk keluar'),
+ main
             {
                 padding: 1,
                 margin: 1,
@@ -131,6 +139,18 @@ export class AICodeAssistant {
         const spinner = ora('🔄 Menginisialisasi AI Code Assistant...').start();
 
         try {
+ cursor/migrasi-python-ke-nodejs-dengan-fitur-lengkap-897b
+            // Check if API key is configured
+            const status = aiService.getProjectStatus();
+            
+            if (!status.apiKeyConfigured) {
+                spinner.stop();
+                await this.setupApiKey();
+                spinner.start('🔄 Melanjutkan inisialisasi...');
+            }
+
+=======
+  main
             // Load models
             await aiService.loadModels();
             spinner.text = '📂 Memindai project...';
@@ -148,6 +168,76 @@ export class AICodeAssistant {
     }
 
     /**
+ cursor/migrasi-python-ke-nodejs-dengan-fitur-lengkap-897b
+     * Setup API key for first time users
+     */
+    async setupApiKey() {
+        console.log(boxen(
+            chalk.yellow.bold('🔑 KONFIGURASI API KEY\n\n') +
+            chalk.white('Untuk menggunakan fitur AI, Anda perlu mengonfigurasi API key.\n\n') +
+            chalk.blue('📋 Langkah-langkah:\n') +
+            chalk.gray('1. Daftar di ') + chalk.cyan('https://inference.do-ai.run/') + '\n' +
+            chalk.gray('2. Dapatkan API key dari dashboard\n') +
+            chalk.gray('3. Masukkan API key di bawah ini\n\n') +
+            chalk.green('💡 API key akan disimpan secara lokal dan aman'),
+            {
+                padding: 1,
+                borderStyle: 'round',
+                borderColor: 'yellow',
+                title: '⚙️ Setup',
+                titleAlignment: 'center'
+            }
+        ));
+
+        while (true) {
+            try {
+                const apiKey = await this.getUserInput('Masukkan API key Anda');
+                
+                if (!apiKey || apiKey.trim().length === 0) {
+                    console.log(chalk.red('❌ API key tidak boleh kosong'));
+                    continue;
+                }
+
+                if (apiKey.trim().length < 10) {
+                    console.log(chalk.red('❌ API key terlalu pendek, mohon periksa kembali'));
+                    continue;
+                }
+
+                // Test API key
+                const testSpinner = ora('🧪 Menguji API key...').start();
+                
+                aiService.setApiKey(apiKey.trim());
+                
+                try {
+                    await aiService.loadModels();
+                    testSpinner.succeed('✅ API key valid dan berhasil dikonfigurasi!');
+                    
+                    console.log(boxen(
+                        chalk.green.bold('🎉 KONFIGURASI BERHASIL!\n\n') +
+                        chalk.white('API key telah disimpan dan siap digunakan.\n') +
+                        chalk.blue('Anda sekarang dapat menggunakan semua fitur AI!'),
+                        {
+                            padding: 1,
+                            borderStyle: 'round',
+                            borderColor: 'green'
+                        }
+                    ));
+                    
+                    break;
+                } catch (error) {
+                    testSpinner.fail('❌ API key tidak valid');
+                    console.log(chalk.red(`Error: ${error.message}`));
+                    console.log(chalk.yellow('💡 Silakan periksa API key Anda dan coba lagi\n'));
+                }
+            } catch (error) {
+                console.log(chalk.red(`❌ Error: ${error.message}`));
+            }
+        }
+    }
+
+    /**
+=======
+ main
      * Display project info
      */
     displayProjectInfo() {

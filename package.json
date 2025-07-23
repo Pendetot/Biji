@@ -11,6 +11,10 @@
     "start": "node index.js",
     "dev": "node --watch index.js",
     "demo": "node demo.js",
+cursor/migrasi-python-ke-nodejs-dengan-fitur-lengkap-897b
+    "demo-api": "node demo-api-setup.js",
+=======
+main
     "test": "node test.js",
     "build": "echo 'No build step required'",
     "install-global": "npm install -g ."

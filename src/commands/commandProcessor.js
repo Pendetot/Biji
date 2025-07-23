@@ -1,6 +1,10 @@
 import chalk from 'chalk';
 import path from 'path';
+cursor/migrasi-python-ke-nodejs-dengan-fitur-lengkap-897b
+import * as diff from 'diff';
+=======
 import { createDiffPatch } from 'diff';
+main
 import fileManager from '../utils/fileManager.js';
 import aiService from '../services/aiService.js';
 import commandExecutor from '../services/commandExecutor.js';
@@ -110,7 +114,14 @@ export class CommandProcessor {
             
             // Configuration commands
             if (commandLower.startsWith('config ')) {
+cursor/migrasi-python-ke-nodejs-dengan-fitur-lengkap-897b
+                return await this._handleConfig(trimmedCommand);
+            }
+            if (commandLower === 'setup-api' || commandLower === 'api-key') {
+                return await this._handleSetupApiKey();
+=======
                 return this._handleConfig(trimmedCommand);
+main
             }
             if (commandLower === 'history') {
                 return this._handleHistory();
@@ -412,12 +423,21 @@ export class CommandProcessor {
             return chalk.red(`❌ File ${file2} tidak ditemukan`);
         }
 
+cursor/migrasi-python-ke-nodejs-dengan-fitur-lengkap-897b
+        const diffResult = diff.createPatch(file1, content1, content2, file1, file2);
+        
+        if (diffResult && !diffResult.includes('@@')) {
+            return chalk.green(`✅ File ${file1} dan ${file2} identik`);
+        } else {
+            return `${chalk.blue(`📊 Perbedaan antara ${file1} dan ${file2}:`)}\n${diffResult}`;
+=======
         const diff = createDiffPatch(file1, file2, content1, content2);
         
         if (diff) {
             return `${chalk.blue(`📊 Perbedaan antara ${file1} dan ${file2}:`)}\n${diff}`;
         } else {
             return chalk.green(`✅ File ${file1} dan ${file2} identik`);
+ main
         }
     }
 
@@ -579,6 +599,77 @@ export class CommandProcessor {
     /**
      * Handle configuration
      */
+ cursor/migrasi-python-ke-nodejs-dengan-fitur-lengkap-897b
+    async _handleConfig(command) {
+        const parts = this._parseCommand(command);
+        if (parts.length < 2) {
+            return chalk.yellow(`${chalk.blue('⚙️ Konfigurasi yang tersedia:')}\n\n` +
+                `${chalk.cyan('setup-api')}        - Setup/ubah API key\n` +
+                `${chalk.cyan('api-key')}          - Setup/ubah API key\n` +
+                `${chalk.cyan('config models')}    - Tampilkan model yang tersedia\n` +
+                `${chalk.cyan('config status')}    - Tampilkan status konfigurasi`);
+        }
+
+        const subCommand = parts[1].toLowerCase();
+        
+        if (subCommand === 'models') {
+            return this._handleModels();
+        } else if (subCommand === 'status') {
+            return this._handleStatus();
+        } else {
+            return chalk.yellow('⚠️ Sub-command tidak dikenal. Gunakan: config models atau config status');
+        }
+    }
+
+    /**
+     * Handle API key setup
+     */
+    async _handleSetupApiKey() {
+        console.log(chalk.blue('🔄 Memulai setup API key...\n'));
+        
+        const readline = await import('readline');
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+        });
+
+        return new Promise((resolve) => {
+            const askForApiKey = () => {
+                rl.question(chalk.cyan('🔑 Masukkan API key baru: '), async (apiKey) => {
+                    if (!apiKey || apiKey.trim().length === 0) {
+                        console.log(chalk.red('❌ API key tidak boleh kosong'));
+                        askForApiKey();
+                        return;
+                    }
+
+                    if (apiKey.trim().length < 10) {
+                        console.log(chalk.red('❌ API key terlalu pendek, mohon periksa kembali'));
+                        askForApiKey();
+                        return;
+                    }
+
+                    // Test API key
+                    console.log(chalk.blue('🧪 Menguji API key...'));
+                    
+                    const oldApiKey = aiService.getProjectStatus().apiKeyConfigured;
+                    aiService.setApiKey(apiKey.trim());
+                    
+                    try {
+                        await aiService.loadModels();
+                        console.log(chalk.green('✅ API key berhasil dikonfigurasi dan divalidasi!'));
+                        rl.close();
+                        resolve(chalk.green('🎉 Setup API key selesai!'));
+                    } catch (error) {
+                        console.log(chalk.red('❌ API key tidak valid'));
+                        console.log(chalk.yellow('💡 Silakan periksa API key Anda dan coba lagi\n'));
+                        askForApiKey();
+                    }
+                });
+            };
+
+            askForApiKey();
+        });
+=======
     _handleConfig(command) {
         const parts = this._parseCommand(command);
         if (parts.length < 2) {
@@ -587,6 +678,7 @@ export class CommandProcessor {
 
         // TODO: Implement configuration management
         return chalk.yellow('⚠️ Fitur konfigurasi belum tersedia');
+main
     }
 
     /**
@@ -729,6 +821,12 @@ ${chalk.red('🚀 MODE EKSEKUSI OTOMATIS:')}
 ${chalk.yellow('🔧 UTILITAS:')}
    history            - Tampilkan history perintah AI
    cmd-history        - Tampilkan history eksekusi terminal
+ cursor/migrasi-python-ke-nodejs-dengan-fitur-lengkap-897b
+   setup-api          - Setup/ubah API key
+   api-key            - Setup/ubah API key
+   config             - Tampilkan opsi konfigurasi
+=======
+main
    clear              - Bersihkan layar
    help               - Tampilkan bantuan ini
    
