@@ -61,7 +61,11 @@ export class AICodeAssistant {
             '/do pindah', '/do hapus', '/do tampilkan',
             
             // Utilities
+cursor/migrasi-python-ke-nodejs-dengan-fitur-lengkap-897b
             'config', 'setup-api', 'api-key', 'history', 'cmd-history', 'help', 'clear', 'exit', 'quit'
+=======
+            'config', 'history', 'cmd-history', 'help', 'clear', 'exit', 'quit'
+main
         ];
 
         // Special completion for /do commands
@@ -111,7 +115,11 @@ export class AICodeAssistant {
             chalk.magenta('🎯 Mode Baru: Natural Language Commands!') + '\n' +
             chalk.white('   Ketik: ') + chalk.cyan('/do buat folder components') + '\n' +
             chalk.white('   Atau: ') + chalk.cyan('/do copy file.js ke backup/') + '\n\n' +
+cursor/migrasi-python-ke-nodejs-dengan-fitur-lengkap-897b
             chalk.blue('💡 Ketik "help" untuk bantuan, "setup-api" untuk konfigurasi API, "exit" untuk keluar'),
+=======
+            chalk.blue('💡 Ketik "help" untuk bantuan, "exit" untuk keluar'),
+ main
             {
                 padding: 1,
                 margin: 1,
@@ -131,6 +139,7 @@ export class AICodeAssistant {
         const spinner = ora('🔄 Menginisialisasi AI Code Assistant...').start();
 
         try {
+ cursor/migrasi-python-ke-nodejs-dengan-fitur-lengkap-897b
             // Check if API key is configured
             const status = aiService.getProjectStatus();
             
@@ -140,6 +149,8 @@ export class AICodeAssistant {
                 spinner.start('🔄 Melanjutkan inisialisasi...');
             }
 
+=======
+  main
             // Load models
             await aiService.loadModels();
             spinner.text = '📂 Memindai project...';
@@ -157,6 +168,7 @@ export class AICodeAssistant {
     }
 
     /**
+ cursor/migrasi-python-ke-nodejs-dengan-fitur-lengkap-897b
      * Setup API key for first time users
      */
     async setupApiKey() {
@@ -224,6 +236,8 @@ export class AICodeAssistant {
     }
 
     /**
+=======
+ main
      * Display project info
      */
     displayProjectInfo() {

@@ -430,7 +430,11 @@ Jika user memberikan instruksi natural language, konversi menjadi perintah termi
             loaded: this.projectLoaded,
             filesCount: Object.keys(this.filesData).length,
             currentModel: this.selectedModel,
+cursor/migrasi-python-ke-nodejs-dengan-fitur-lengkap-897b
             apiKeyConfigured: config.isApiKeyConfigured(),
+=======
+            apiKeyConfigured: this.apiKey && this.apiKey.trim().length > 1,
+main
             currentDirectory: process.cwd()
         };
     }

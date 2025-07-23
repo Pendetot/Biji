@@ -74,9 +74,12 @@ npm start
 
 # Lihat demo fitur baru
 npm run demo
+cursor/migrasi-python-ke-nodejs-dengan-fitur-lengkap-897b
 
 # Lihat demo setup API key
 npm run demo-api
+=======
+main
 ```
 
 ### Instalasi Global
@@ -109,6 +112,7 @@ ai-assistant
 ```
 
 ### Konfigurasi API Key
+cursor/migrasi-python-ke-nodejs-dengan-fitur-lengkap-897b
 Aplikasi akan **otomatis meminta API key** saat pertama kali dijalankan. Tidak perlu konfigurasi manual!
 
 ```bash
@@ -129,6 +133,13 @@ npm start
 setup-api          # Setup/ubah API key
 api-key            # Alias untuk setup-api
 config status      # Cek status konfigurasi
+=======
+Sebelum menggunakan fitur AI, konfigurasikan API key Anda:
+
+```bash
+# Di dalam aplikasi
+config apiKey YOUR_API_KEY_HERE
+main
 ```
 
 ## 📋 Perintah Utama
@@ -199,6 +210,7 @@ refresh                    # Refresh file cache
 
 ### 🔍 **Utilitas**
 ```bash
+cursor/migrasi-python-ke-nodejs-dengan-fitur-lengkap-897b
 history                    # Tampilkan history perintah AI
 cmd-history               # Tampilkan history eksekusi terminal
 setup-api                 # Setup/ubah API key
@@ -207,6 +219,12 @@ config                    # Tampilkan opsi konfigurasi
 help                      # Tampilkan bantuan
 clear                     # Bersihkan layar
 exit                      # Keluar dari aplikasi
+=======
+history                    # Tampilkan history perintah
+help                       # Tampilkan bantuan
+clear                      # Bersihkan layar
+exit                       # Keluar dari aplikasi
+main
 ```
 
 ## 💡 Contoh Penggunaan
